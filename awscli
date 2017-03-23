@@ -1,0 +1,31 @@
+#!/usr/bin/python
+from __future__ import unicode_literals
+import sys
+from prompt_toolkit import prompt
+from prompt_toolkit.completion import Completer, Completion
+from prompt_toolkit.contrib.completers import WordCompleter
+import ConfigReader 
+import QueryConstructor
+import ResultFetcher
+import argparse
+import Sync
+
+configuration = ConfigReader.read_config()
+html_completer = WordCompleter(configuration['autosuggest'])
+
+parser = argparse.ArgumentParser(description='checks the validity of tags')
+parser.add_argument('-e', help='checks the client tag is valid or not')
+args = parser.parse_args()
+if args.e != None:
+    ResultFetcher.run_query(args.e,configuration)
+    sys.exit(2)
+
+while (True):
+    text = prompt("awscli>", completer=html_completer)
+    if text != "" and text != None and len(text) > 2:
+        if text == "exit":
+            sys.exit(1)
+        elif text == "sync":
+            Sync.sync_data(configuration)
+        else:
+            ResultFetcher.run_query(text,configuration)

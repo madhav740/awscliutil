@@ -1,0 +1,2 @@
+#!/bin/bash
+awscli -e "list ec2 for name $1"
